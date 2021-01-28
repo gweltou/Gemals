@@ -2,13 +2,13 @@ package diwan.fablab.gemmals.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import diwan.fablab.gemmals.graphics.DrawablePhysics;
 import gwel.game.entities.Avatar;
-import gwel.game.entities.PhysicsCategories;
 
-public class FoodTomato extends PhysicsAvatar {
+public class FoodTomato extends Food {
 
     public FoodTomato(World world, Vector2 position) {
         avatar = Avatar.fromFile(Gdx.files.internal("avatar/food_tomato.json").file());
@@ -17,6 +17,7 @@ public class FoodTomato extends PhysicsAvatar {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(position);
+        bodyDef.angle = MathUtils.random(MathUtils.PI2);
         body = world.createBody(bodyDef);
 
         CircleShape circle = new CircleShape();
@@ -36,6 +37,7 @@ public class FoodTomato extends PhysicsAvatar {
         circle.setRadius(0.12f);
         fixtureDef.shape = circle;
         body.createFixture(fixtureDef);
+        body.setUserData(this);
 
         circle.dispose();
 

@@ -10,8 +10,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
+import diwan.fablab.gemmals.entities.Food;
 import diwan.fablab.gemmals.entities.FoodTomato;
 import diwan.fablab.gemmals.entities.PhysicsAvatar;
+import diwan.fablab.gemmals.entities.PhysicsCategories;
 import diwan.fablab.gemmals.graphics.DrawablePhysics;
 import diwan.fablab.gemmals.graphics.MyRenderer;
 import gwel.game.graphics.DrawableCircle;
@@ -35,7 +37,7 @@ public class CreatureScreen extends MyScreen {
     private DrawableCircle buttonPlay;
 
     private final Array<DrawablePhysics> drawables = new Array<>();
-    public final Array<PhysicsAvatar> food = new Array<>();
+    public final Array<Food> food = new Array<>();
 
     //private MyContactListener contactListener;
 
@@ -43,6 +45,7 @@ public class CreatureScreen extends MyScreen {
         this.game = game;
 
         world = new World(new Vector2(0.0f, -10.0f), true);
+        world.setContactListener(new MyContactListener());
 
         renderer = new MyRenderer();
         batch = new SpriteBatch();
@@ -209,7 +212,7 @@ public class CreatureScreen extends MyScreen {
     public void tap(float x, float y, int count, int button) {
         if (buttonFeed.getCenter().dst(x, y) < buttonFeed.getRadius()) {
             Gdx.app.log("TOUCH", "button feed");
-            if (food.isEmpty())
+            if (food.size < 5)
                 food.add(new FoodTomato(world, new Vector2(0, 2)));
             //creature.feed();
         } else if (buttonClean.getCenter().dst(x, y) < buttonClean.getRadius()) {
@@ -239,6 +242,7 @@ public class CreatureScreen extends MyScreen {
         fixtureDef.density = 0.0f;
         fixtureDef.friction = 0.5f;
         fixtureDef.restitution = 0.3f;
+        fixtureDef.filter.categoryBits = PhysicsCategories.GROUND;
         groundBody.createFixture(fixtureDef);
         DrawablePhysics ground = new DrawablePhysics(groundBody);
         drawables.add(ground);

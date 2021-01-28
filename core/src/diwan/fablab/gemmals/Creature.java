@@ -6,10 +6,13 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Json;
+import diwan.fablab.gemmals.entities.Food;
 import diwan.fablab.gemmals.entities.PhysicsAvatar;
 import diwan.fablab.gemmals.graphics.DrawablePhysics;
 import gwel.game.entities.Avatar;
-import gwel.game.entities.PhysicsCategories;
+import diwan.fablab.gemmals.entities.PhysicsCategories;
+
+import java.util.Iterator;
 
 
 public class Creature extends PhysicsAvatar {
@@ -150,8 +153,15 @@ public class Creature extends PhysicsAvatar {
                 mood = MathUtils.clamp(mood, 0, moodCeiling);
 
                 if (hungryFactor > 0.5f && !stage.food.isEmpty()) {
-                    stage.food.pop().dispose();
-                    feed();
+                    for (Iterator<Food> iter = stage.food.iterator(); iter.hasNext(); ) {
+                        Food food = iter.next();
+                        if (food.isEdible()) {
+                            food.dispose();
+                            iter.remove();
+                            feed();
+                            break;
+                        }
+                    }
                 }
 
                 // Go to sleep
