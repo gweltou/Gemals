@@ -1,5 +1,6 @@
 package gwel.game.entities;
 
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.JsonReader;
@@ -137,19 +138,15 @@ public class Avatar {
     }
 
 
-    public static Avatar fromFile(File file) {
+    public static Avatar fromFile(FileHandle file) {
         return fromFile(file, true, true);
     }
 
-    public static Avatar fromFile(File file, boolean loadGeom, boolean loadAnim) {
+    public static Avatar fromFile(FileHandle file, boolean loadGeom, boolean loadAnim) {
         Avatar avatar = new Avatar();
         JsonValue fromJson = null;
-        try {
-            InputStream in = new FileInputStream(file);
-            fromJson = new JsonReader().parse(in);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        //InputStream in = new FileInputStream(file);
+        fromJson = new JsonReader().parse(file);
         if (fromJson == null)
             return avatar;
 

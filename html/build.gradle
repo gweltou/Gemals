@@ -4,8 +4,8 @@ gwt {
     minHeapSize="1G"
 
     src = files(file("src/")) // Needs to be in front of "modules" below.
-    modules 'diwan.fablab.tamagochi.GdxDefinition'
-    devModules 'diwan.fablab.tamagochi.GdxDefinitionSuperdev'
+    modules 'diwan.fablab.gemmals.GdxDefinition'
+    devModules 'diwan.fablab.gemmals.GdxDefinitionSuperdev'
     project.webAppDirName = 'webapp'
 
     compiler {

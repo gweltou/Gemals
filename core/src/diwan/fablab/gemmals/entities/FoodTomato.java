@@ -11,7 +11,7 @@ import gwel.game.entities.Avatar;
 public class FoodTomato extends Food {
 
     public FoodTomato(World world, Vector2 position) {
-        avatar = Avatar.fromFile(Gdx.files.internal("avatar/food_tomato.json").file());
+        avatar = Avatar.fromFile(Gdx.files.internal("avatar/food_tomato.json"));
         avatar.scale(0.015f);
 
         BodyDef bodyDef = new BodyDef();

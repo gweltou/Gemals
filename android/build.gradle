@@ -17,7 +17,7 @@ android {
         exclude 'META-INF/robovm/ios/robovm.xml'
     }
     defaultConfig {
-        applicationId "diwan.fablab.tamagochi"
+        applicationId "diwan.fablab.gemmals"
         minSdkVersion 14
         targetSdkVersion 30
         versionCode 1
@@ -86,7 +86,7 @@ task run(type: Exec) {
     }
 
     def adb = path + "/platform-tools/adb"
-    commandLine "$adb", 'shell', 'am', 'start', '-n', 'diwan.fablab.tamagochi/diwan.fablab.tamagochi.AndroidLauncher'
+    commandLine "$adb", 'shell', 'am', 'start', '-n', 'diwan.fablab.gemmals/diwan.fablab.gemmals.AndroidLauncher'
 }
 
 eclipse.project.name = appName + "-android"
