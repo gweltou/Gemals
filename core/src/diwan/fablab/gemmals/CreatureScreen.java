@@ -6,14 +6,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
-import diwan.fablab.gemmals.entities.Food;
-import diwan.fablab.gemmals.entities.FoodTomato;
-import diwan.fablab.gemmals.entities.PhysicsAvatar;
-import diwan.fablab.gemmals.entities.PhysicsCategories;
+import diwan.fablab.gemmals.entities.*;
 import diwan.fablab.gemmals.graphics.DrawablePhysics;
 import diwan.fablab.gemmals.graphics.MyRenderer;
 import gwel.game.graphics.DrawableCircle;
@@ -146,7 +144,7 @@ public class CreatureScreen extends MyScreen {
             batch.begin();
             game.defaultfont.draw(batch, "state: " + creature.state, Gdx.graphics.getHeight()-40, Gdx.graphics.getHeight() - height);
 
-            game.defaultfont.draw(batch, "life steps: " + creature.age, 20, Gdx.graphics.getHeight() - height);
+            game.defaultfont.draw(batch, "life steps: " + creature.steps, 20, Gdx.graphics.getHeight() - height);
             game.defaultfont.draw(batch, "energy: " + creature.energy, 20, Gdx.graphics.getHeight() - 2*height);
             game.defaultfont.draw(batch, "hungry: " + creature.hungry, 20, Gdx.graphics.getHeight() - 3*height);
             game.defaultfont.draw(batch, "sleepy: " + creature.sleepy, 20, Gdx.graphics.getHeight() - 4*height);
@@ -212,9 +210,13 @@ public class CreatureScreen extends MyScreen {
     public void tap(float x, float y, int count, int button) {
         if (buttonFeed.getCenter().dst(x, y) < buttonFeed.getRadius()) {
             Gdx.app.log("TOUCH", "button feed");
-            if (food.size < 5)
-                food.add(new FoodTomato(world, new Vector2(0, 2)));
-            //creature.feed();
+            if (food.size < 5) {
+                if (MathUtils.random() < 0.5f) {
+                    food.add(new FoodMeat(world, new Vector2(0, 2)));
+                } else {
+                    food.add(new FoodTomato(world, new Vector2(0, 2)));
+                }
+            }
         } else if (buttonClean.getCenter().dst(x, y) < buttonClean.getRadius()) {
             Gdx.app.log("TOUCH", "button clean");
             creature.clean();

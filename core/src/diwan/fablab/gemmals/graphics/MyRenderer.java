@@ -47,8 +47,8 @@ public class MyRenderer implements Disposable {
 		return shader;
 	}
 
-	private final int maxVertices = 16000;
-	private final int maxIndices = 48000;
+	private final int maxVertices = 32000;
+	private final int maxIndices = 96000;
 
 	//The array which holds all the data, interleaved like so:
 	//    x, y, r, g, b, a
@@ -68,8 +68,8 @@ public class MyRenderer implements Disposable {
 	private final Vector2 tmpv1 = new Vector2();
 	private final Vector2 tmpv2 = new Vector2();
 	private final Vector2 tmpv3 = new Vector2();
-	private short numVertices;
-	private short numIndices;
+	private int numVertices;
+	private int numIndices;
 	private int vertexIdx;
 
 	
@@ -151,21 +151,7 @@ public class MyRenderer implements Disposable {
 		numVertices += vertices.length/2;
 	}
 
-/*
-	public void triangle(Vector2 p1, Vector2 p2, Vector2 p3) {
-		if (matrixStack.isEmpty()) {
-			triangle(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
-		} else {
-			tmpv1.set(p1);
-			tmpv2.set(p2);
-			tmpv3.set(p3);
-			matrixStack.getFirst().applyTo(tmpv1);
-			matrixStack.getFirst().applyTo(tmpv2);
-			matrixStack.getFirst().applyTo(tmpv3);
-			triangle(tmpv1.x, tmpv1.y, tmpv2.x, tmpv2.y, tmpv3.x, tmpv3.y);
-		}
-	}*/
-	
+	/*
 	private void triangle(float x1, float y1, float x2, float y2, float x3, float y3) {
 		//we don't want to hit any index out of bounds exception...
 		//so we need to flush the batch if we can't store any more verts
@@ -181,6 +167,7 @@ public class MyRenderer implements Disposable {
 		rawVertex(x3, y3);	//bottom right vertex
 		indices[numIndices++] = (short) (numVertices-1);
 	}
+	 */
 
 	/*
 	public void texturedSquare(float xPos, float yPos, float width, float height, Vector2 uv0, Vector2 uv1, Vector2 uv2) {	}
@@ -192,6 +179,7 @@ public class MyRenderer implements Disposable {
 		circle(pos.x, pos.y, radius, Math.max(1,  ((int) Math.sqrt(radius*camera.PPU))<<2 ));
 	}*/
 
+	/*
 	private void rawVertex(float x, float y) {
 		vertices[vertexIdx++] = x;
 		vertices[vertexIdx++] = y;
@@ -201,6 +189,7 @@ public class MyRenderer implements Disposable {
 		vertices[vertexIdx++] = color.a;
 		numVertices++;
 	}
+	 */
 
 
 	public void flush() {

@@ -1,7 +1,6 @@
 package diwan.fablab.gemmals;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -21,14 +20,17 @@ public class Creature extends PhysicsAvatar {
     private CreatureScreen stage;
 
     private enum State {
-        DEAD,
+        EGG,
         IDLE,
         SLEEPING,
+        DEAD,
     }
 
-    public int age;
+    public int steps;
     State state;
     private float timeInStep;
+
+    Avatar idleAvatar, sleepAvatar;
 
 
     // When energy falls to 0 the creature's life is threatened
@@ -63,7 +65,7 @@ public class Creature extends PhysicsAvatar {
     private float hungerPerStepAwake = 0.5f;
     private float hungerPerStepSleeping = 0.1f;
 
-    private float moodPerStepSleeping = 0.05f;
+    private float moodPerStepSleeping = 0.03f;
 
     private float sleepinessPerStepAwake = 0.8f;
     private float sleepinessPerStepSleeping = -2f;
@@ -74,8 +76,8 @@ public class Creature extends PhysicsAvatar {
     public Creature(CreatureScreen stage) {
         this.stage = stage;
 
-        state = State.IDLE;
-        age = 0;
+        state = State.EGG;
+        steps = 0;
         timeInStep = 0;
 
         energy = energyCeiling * 0.8f;
@@ -84,8 +86,14 @@ public class Creature extends PhysicsAvatar {
         dirty = 20f;
         mood = moodCeiling * 0.5f;
 
-        avatar = Avatar.fromFile(Gdx.files.internal("avatar/mufmuf_idle_02.json"));
-        avatar.scale(0.01f);
+        avatar = Avatar.fromFile(Gdx.files.internal("avatar/eggBlue_2.json"));
+        avatar.scale(0.015f);
+        idleAvatar = Avatar.fromFile(Gdx.files.internal("avatar/mufmuf_idle_02.json"));
+        idleAvatar.scale(0.01f);
+        idleAvatar.timeScale(4);
+        sleepAvatar = Avatar.fromFile(Gdx.files.internal("avatar/mufmuf_sleep_g01.json"));
+        sleepAvatar.scale(0.01f);
+        sleepAvatar.timeScale(1.3f);
     }
 
 
@@ -128,20 +136,26 @@ public class Creature extends PhysicsAvatar {
             lifeStep();
         }
 
-        if (state == State.IDLE)
-            avatar.updateAnimation(4 * delta);
+        avatar.updateAnimation(delta);
     }
 
 
     public void lifeStep() {
-        float ageFactor = (float) age/5000;
-        float energyFactor = energy/energyCeiling;
+        float ageFactor = (float) steps / 5000;
+        float energyFactor = energy / energyCeiling;
         float hungryFactor = hungry / hungryCeiling;
         float sleepyFactor = sleepy / sleepyCeiling;
-        float moodFactor = mood/moodCeiling;
+        float moodFactor = mood / moodCeiling;
 
         switch (state) {
             case DEAD:
+                break;
+
+            case EGG:
+                if (MathUtils.random() < 0.01* steps) {
+                    avatar = idleAvatar;
+                    state = State.IDLE;
+                }
                 break;
 
             case IDLE:
@@ -171,8 +185,12 @@ public class Creature extends PhysicsAvatar {
                         (float) Math.pow(sleepyFactor, 1) +
                         (float) Math.pow(moodFactor, 6);
                 sleepProb /= 6;
-                if (MathUtils.random() < sleepProb)
+                if (MathUtils.random() < sleepProb) {
                     state = State.SLEEPING;
+                    if (MathUtils.random() < 0.5f)
+                        sleepAvatar.scale(-1, 1);
+                    avatar = sleepAvatar;
+                }
                 break;
 
             case SLEEPING:
@@ -196,11 +214,12 @@ public class Creature extends PhysicsAvatar {
                     } else {
                         // Wake up
                         state = State.IDLE;
+                        avatar = idleAvatar;
                     }
                 }
                 break;
         }
-        age += 1;
+        steps += 1;
     }
 
 

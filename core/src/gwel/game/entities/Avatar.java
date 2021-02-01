@@ -1,8 +1,8 @@
 package gwel.game.entities;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.math.Affine2;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter;
@@ -14,23 +14,47 @@ import gwel.game.graphics.ComplexShape;
 import java.io.*;
 import java.util.*;
 
-
+/**
+ * This class is a modification from the original libAvatar class
+ */
 public class Avatar {
     public ComplexShape shape;
     private final Vector2 position = new Vector2();
+    private final Affine2 transform = new Affine2();
     private HashMap<String, Animation[][]> animations;  // Should have better perfs than animationCollection
+    private String[] postureNames;
     private ComplexShape[] partsList;
+    public ArrayList<Shape2D> physicsShapes;
+    private float timeFactor = 1f;
 
 
     public Avatar() {
+        physicsShapes = new ArrayList<>();
     }
 
 
     public void setPosition(float x, float y) { position.set(x, y); }
 
     public void scale(float s) {
-        shape.hardTransform(new Affine2().scale(s, s));
+        scale(s, s);
     }
+
+    public void scale(float sx, float sy) {
+        transform.scale(sx, sy);
+        for (Shape2D shape : physicsShapes) {
+            if (shape.getClass() == Polygon.class) {
+                Polygon polygon = (Polygon) shape;
+                polygon.setScale(sx, sy);
+            } else if (shape.getClass() == Circle.class) {
+                Circle circle = (Circle) shape;
+                circle.x *= sx;
+                circle.y *= sy;
+                circle.radius *= sx;
+            }
+        }
+    }
+
+    public void timeScale(float s) { timeFactor = s; }
 
 
     public void setShape(ComplexShape root) {
@@ -46,59 +70,68 @@ public class Avatar {
 
     public void setAnimationCollection(AnimationCollection collection) {
         ArrayList<String> partsName = new ArrayList<>();
-        for (int i=0; i<partsList.length; i++)
-            partsName.add(partsList[i].getId());
+        for (ComplexShape partShape : partsList) partsName.add(partShape.getId());
 
+        postureNames = collection.getPostureNames().toArray(new String[0]);
         animations = new HashMap<>();
-        for (String animName : collection.getPosturesNameList()) {
-            HashMap<String, Animation[]> fullAnimation = collection.getPosture(animName);
-            Animation[][] fullAnimationArray = new Animation[partsList.length][];
-            // fullAnimationArray entries are left to 'null' if empty
-            Arrays.fill(fullAnimationArray, null);
-            for(Map.Entry<String, Animation[]> entry : fullAnimation.entrySet()) {
+        for (String postureName : postureNames) {
+            HashMap<String, Animation[]> posture = collection.getPosture(postureName);
+            Animation[][] postureArray = new Animation[partsList.length][];
+            // postureArray entries are left to 'null' if empty
+            Arrays.fill(postureArray, null);
+            for(Map.Entry<String, Animation[]> entry : posture.entrySet()) {
                 int idx = partsName.indexOf(entry.getKey());
                 if (idx >= 0)
-                    fullAnimationArray[idx] = entry.getValue();
+                    postureArray[idx] = entry.getValue();
             }
-            animations.put(animName, fullAnimationArray);
+            animations.put(postureName, postureArray);
         }
     }
 
+    /**
+     * Rebuild an AnimationCollection from the animations array
+     *
+     * @return AnimationCollection
+     */
+    public AnimationCollection getAnimationCollection() {
+        AnimationCollection animationCollection = new AnimationCollection();
+        ArrayList<String> partsName = new ArrayList<>();
+        for (ComplexShape partShape : partsList) partsName.add(partShape.getId());
 
-    public String[] getAnimationsNameList() {
-        return animations.keySet().toArray(new String[0]);
-    }
-
-
-    // Should be used by animation editor only (slow)
-    public void setPosture(HashMap<String, Animation[]> posture, float duration) {
-        Set<String> ids = posture.keySet();
-        for (ComplexShape part : partsList) {
-            if (ids.contains(part.getId())) {
-                Animation[] anims;
-                anims = posture.get(part.getId());
-                part.transitionAnimation(anims, duration);
-            } else {
-                part.transitionAnimation(new Animation[0], duration);
+        for (String postureName : postureNames) {
+            HashMap<String, Animation[]> posture = new HashMap<>();
+            for (String partName : partsName) {
+                int partIdx = partsName.indexOf(partName);
+                Animation[] partAnims = animations.get(postureName)[partIdx];
+                if (partAnims != null)
+                    posture.put(partName, partAnims);
             }
+            animationCollection.addPosture(postureName, posture);
         }
         /*
-        for (Map.Entry<String, Animation[]> entry : posture.entrySet()) {
-            int i=0;
-            for (; i<partsList.length; i++) {
-                if (partsList[i].getId().equals(entry.getKey())) {
-                    partsList[i].transitionAnimation((ArrayList<Animation>) Arrays.asList(entry.getValue()), duration);
-                    break;
-                }
+        for(Map.Entry<String, Animation[][]> entry : animations.entrySet()) {
+            String postureName = entry.getKey();
+            HashMap<String, Animation[]> posture = new HashMap<>();
+            for (String partName : partsName) {
+                int partIdx = partsName.indexOf(partName);
+                posture.put(partName, entry.getValue()[partIdx]);
             }
-        }
-        */
+            animationCollection.addPosture(postureName, posture);
+        }*/
+
+        return animationCollection;
     }
 
-    public void setPosture(HashMap<String, Animation[]> fullAnimation) {
-        setPosture(fullAnimation, 0.2f);
+
+    public String[] getPostureNames() {
+        return postureNames;
     }
 
+
+    // Activate a posture from the collection
+    public void loadPosture(int idx) {
+        loadPosture(postureNames[idx]);
+    }
 
     // Activate a fullAnimation from the collection
     public void loadPosture(String postureName) {
@@ -118,7 +151,7 @@ public class Avatar {
     }
 
 
-    public void updateAnimation(float dtime) { shape.update(dtime); }
+    public void updateAnimation(float dtime) { shape.update(timeFactor * dtime); }
 
     public void resetAnimation() {
         shape.reset();
@@ -133,27 +166,31 @@ public class Avatar {
     public void draw(MyRenderer renderer) {
         renderer.pushMatrix();
         renderer.translate(position.x, position.y);
+        renderer.pushMatrix(transform);
         shape.draw(renderer);
+        renderer.popMatrix();
         renderer.popMatrix();
     }
 
 
     public static Avatar fromFile(FileHandle file) {
-        return fromFile(file, true, true);
+        return fromFile(file, true);
     }
 
-    public static Avatar fromFile(FileHandle file, boolean loadGeom, boolean loadAnim) {
-        Avatar avatar = new Avatar();
-        JsonValue fromJson = null;
-        //InputStream in = new FileInputStream(file);
-        fromJson = new JsonReader().parse(file);
+    public static Avatar fromFile(FileHandle file, boolean loadAnim) {
+        JsonValue fromJson = new JsonReader().parse(file);
         if (fromJson == null)
-            return avatar;
+            return null;
+
+        Avatar avatar = new Avatar();
+
 
         // Load shape first
-        if (loadGeom && fromJson.has("geometry")) {
+        if (fromJson.has("geometry")) {
             JsonValue jsonGeometry = fromJson.get("geometry");
             avatar.setShape(ComplexShape.fromJson(jsonGeometry));
+        } else {
+            System.out.println("No geometry data found !");
         }
 
         if (loadAnim && fromJson.has("animation")) {
@@ -161,17 +198,55 @@ public class Avatar {
             AnimationCollection animationCollection = AnimationCollection.fromJson(jsonAnimation);
             avatar.setAnimationCollection(animationCollection);
             if (animationCollection.size() > 0) {
-                avatar.setPosture(animationCollection.getPosture(0));
+                avatar.loadPosture(0);
+            }
+        }
+
+        if (fromJson.has("box2d")) {
+            for (JsonValue jsonShape : fromJson.get("box2d")) {
+                if (jsonShape.getString("type").equals("circle")) {
+                    Circle circle = new Circle();
+                    circle.setPosition(jsonShape.getFloat("x"), jsonShape.getFloat("y"));
+                    circle.setRadius(jsonShape.getFloat("radius"));
+                    avatar.physicsShapes.add(circle);
+                } else if (jsonShape.getString("type").equals("polygon")) {
+                    Polygon polygon = new Polygon();
+                    polygon.setVertices(jsonShape.get("vertices").asFloatArray());
+                    avatar.physicsShapes.add(polygon);
+                }
             }
         }
 
         return avatar;
     }
 
-    public void saveFile(String filename, AnimationCollection animationCollection) {
+    public void saveFile(String filename) {
         JsonValue json = new JsonValue(JsonValue.ValueType.object);
+
+        json.addChild("animation", getAnimationCollection().toJson());
+
+        JsonValue jsonPhysicsShapes = new JsonValue(JsonValue.ValueType.array);
+        for (Shape2D shape : physicsShapes) {
+            JsonValue jsonShape = new JsonValue(JsonValue.ValueType.object);
+            if (shape.getClass() == Polygon.class) {
+                jsonShape.addChild("type", new JsonValue("polygon"));
+                JsonValue jsonVertices = new JsonValue(JsonValue.ValueType.array);
+                float[] vertices = ((Polygon) shape).getTransformedVertices();
+                for (float vert : vertices)
+                    jsonVertices.addChild(new JsonValue(vert));
+                jsonShape.addChild("vertices", jsonVertices);
+            } else if (shape.getClass() == Circle.class) {
+                Circle circle = (Circle) shape;
+                jsonShape.addChild("type", new JsonValue("circle"));
+                jsonShape.addChild("x", new JsonValue(circle.x));
+                jsonShape.addChild("y", new JsonValue(circle.y));
+                jsonShape.addChild("radius", new JsonValue(circle.radius));
+            }
+            jsonPhysicsShapes.addChild(jsonShape);
+        }
+        json.addChild("box2d", jsonPhysicsShapes);
+
         json.addChild("geometry", shape.toJson(false));
-        json.addChild("animation", animationCollection.toJson());
 
         try {
             FileWriter writer = new FileWriter(filename);
