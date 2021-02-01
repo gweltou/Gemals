@@ -210,11 +210,16 @@ public class CreatureScreen extends MyScreen {
     public void tap(float x, float y, int count, int button) {
         if (buttonFeed.getCenter().dst(x, y) < buttonFeed.getRadius()) {
             Gdx.app.log("TOUCH", "button feed");
-            if (food.size < 5) {
-                if (MathUtils.random() < 0.5f) {
+            if (food.size < 10) {
+                float r = MathUtils.random();
+                if (r < 0.25f) {
                     food.add(new FoodMeat(world, new Vector2(0, 2)));
-                } else {
+                } else if (r < 0.5f) {
                     food.add(new FoodTomato(world, new Vector2(0, 2)));
+                } else if (r < 0.75f) {
+                    food.add(new FoodGreen(world, new Vector2(0, 2)));
+                } else {
+                    food.add(new FoodCheese(world, new Vector2(0, 2)));
                 }
             }
         } else if (buttonClean.getCenter().dst(x, y) < buttonClean.getRadius()) {
