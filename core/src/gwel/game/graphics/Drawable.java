@@ -1,7 +1,7 @@
 package gwel.game.graphics;
 
 
-import diwan.fablab.gemmals.graphics.MyRenderer;
+import diwan.fablab.gemals.graphics.MyRenderer;
 
 public interface Drawable {
     void draw(MyRenderer renderer);

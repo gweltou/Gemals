@@ -202,7 +202,6 @@ public class Animation {
     public Animation copy() {
         try {
             TimeFunction fnCopy = fn.getClass().newInstance();
-            System.out.println(fnCopy);
             fnCopy.setParams(fn.getParamsCopy());
             if (fnCopy instanceof TFTimetable)
                 ((TFTimetable) fnCopy).setTable(((TFTimetable) fn).getTable().clone());
@@ -238,12 +237,11 @@ public class Animation {
         try {
             String fullFunctionName = json.getString("function");
             // Dumb hack to read fully qualified function names
-            fullFunctionName.split(".");
             String[] parts = fullFunctionName.split("[.]");
-            Class c = Class.forName("gwel.game.anim." + parts[parts.length-1]);
-            TimeFunction fn = (TimeFunction) c.newInstance();
+            Class<?> c = Class.forName("gwel.game.anim." + parts[parts.length-1]);
+            TimeFunction fn = (TimeFunction) c.getDeclaredConstructor().newInstance();
             if (fn instanceof TFTimetable) {
-                float[] table = json.getChild("table").asFloatArray();
+                float[] table = json.get("table").asFloatArray();
                 ((TFTimetable) fn).setTable(table);
             }
             for (TFParam param : fn.getParams()) {

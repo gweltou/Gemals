@@ -21,9 +21,7 @@ public class TFTimetable extends TimeFunction {
                 new TFParam<>("duration", TFParam.SLIDER, "s", 0.f, 10.f, duration),
                 new TFParam<>("loop", TFParam.CHECKBOX, "", 0f, 1f, loop),
                 new TFParam<>("smoothend", TFParam.CHECKBOX, "", 0, 1, smoothend)
-                //new TFParam<FloatArray>("table", TFParam.TABLE, "", 0f, 0f, null)
         };
-        //params[3].setPayload(valueTable);
         valueTable = new float[] {0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f};
         reset();
     }
@@ -40,6 +38,10 @@ public class TFTimetable extends TimeFunction {
         return valueTable;
     }
 
+
+    public void setEasing(String easingName) {
+        interp = Animation.getInterpolation(easingName);
+    }
 
     public void setEasingTable(int [] table) { easingTable = table; }
 

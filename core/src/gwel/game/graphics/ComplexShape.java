@@ -3,10 +3,11 @@ package gwel.game.graphics;
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.JsonValue;
-import diwan.fablab.gemmals.graphics.MyRenderer;
+import diwan.fablab.gemals.graphics.MyRenderer;
 import gwel.game.anim.Animation;
 
 import java.util.ArrayList;
+
 
 
 public class ComplexShape implements Shape {
@@ -64,6 +65,14 @@ public class ComplexShape implements Shape {
     }
 
 
+    /**
+     * Not implemented
+     */
+    public boolean contains(float x, float y) {
+        return false;
+    }
+
+
     public Affine2 getTransform() {
       return new Affine2(transform);
     }
@@ -87,6 +96,14 @@ public class ComplexShape implements Shape {
             for (Animation animation : animations)
                 animation.scale(transform.m00);
         }
+    }
+
+    public void hardTranslate(float x, float y) {
+        hardTransform(new Affine2().setToTranslation(x, y));
+    }
+
+    public void hardScale(float sx, float sy) {
+        hardTransform(new Affine2().setToScaling(sx, sy));
     }
 
 
@@ -113,8 +130,16 @@ public class ComplexShape implements Shape {
     public ArrayList<String> getIdList() {
         ArrayList<String> list = new ArrayList<>();
         list.add(id);
-        for (ComplexShape child : children) {
+        for (ComplexShape child : children)
             list.addAll(child.getIdList());
+        return list;
+    }
+
+    public ArrayList<String> getIdListPre(String pre) {
+        ArrayList<String> list = new ArrayList<>();
+        list.add(pre + id);
+        for (ComplexShape child : children) {
+            for (String childId : child.getIdListPre("  ")) list.add(pre + childId);
         }
         return list;
     }
@@ -180,7 +205,7 @@ public class ComplexShape implements Shape {
             transform.translate(-localOrigin.x, -localOrigin.y);
         } else if (animations.length > 0) {
             transform.setToTranslation(localOrigin);
-            for (int i=animations.length-1; i>=0; i--) {
+            for (int i = animations.length-1; i >= 0; i--) {
                 transform.mul(animations[i].update(dtime));
             }
             transform.translate(-localOrigin.x, -localOrigin.y);
@@ -221,6 +246,7 @@ public class ComplexShape implements Shape {
     }
 
 
+    // Maybe could put a "fixtransform" parameter here
     public void transitionAnimation(Animation[] nextAnims, float duration) {
       // duration is in seconds
         if (animations.length > 0) {
@@ -242,7 +268,7 @@ public class ComplexShape implements Shape {
 
     @Override
     public void setColorMod(float mr, float mg, float mb, float ma) {
-        for (Shape shape : shapes)
+        for (Drawable shape : shapes)
             shape.setColorMod(mr, mg, mb, ma);
     }
 
