@@ -26,8 +26,8 @@ public class MyRenderer implements Disposable {
 		return shader;
 	}
 
-	private final int maxVertices = 32000;
-	private final int maxIndices = 96000;
+	private final int maxVertices = 128000;
+	private final int maxIndices = 384000;
 
 	//The array which holds all the data, interleaved like so:
 	//    x, y, r, g, b, a
@@ -174,7 +174,8 @@ public class MyRenderer implements Disposable {
 	public void flush() {
 		if (numVertices == 0) return;
 
-		//Gdx.app.log("renderer", "n_verts: " + numVertices + ", n_indices: " + numIndices);
+		//if (MathUtils.random() < 0.01f)
+		//	Gdx.app.log("renderer", "n_verts: " + numVertices + ", n_indices: " + numIndices);
 
 		//no need for depth...
 		//Gdx.gl.glDepthMask(false);

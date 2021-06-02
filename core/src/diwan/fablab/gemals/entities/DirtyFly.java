@@ -2,32 +2,36 @@ package diwan.fablab.gemals.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
+import diwan.fablab.gemals.Creature;
 import diwan.fablab.gemals.graphics.MyRenderer;
 import gwel.game.anim.TFEaseFromTo;
+import gwel.game.anim.TFSin;
 import gwel.game.anim.TFTimetable;
 import gwel.game.anim.TimeFunction;
 import gwel.game.entities.Avatar;
 import gwel.game.entities.Entity;
-import gwel.game.graphics.ComplexShape;
 
 
 public class DirtyFly extends Entity {
-    public static final ComplexShape shape = Avatar.fromFile(Gdx.files.internal("avatar/dirtyfly.json")).shape;
+    public static final Avatar mould = Avatar.fromFile(Gdx.files.internal("avatar/dirtyfly.json"));
     private final Avatar avatar;
     private TFTimetable fnX, fnY;
     private TFEaseFromTo fn0, fn0Scale;
+    private TFSin sinx;
     private float posX, posY, prevPosX = 0f;
-    private State state;
+    public State state;
+    private Creature creature;
 
-    private enum State {
+    public enum State {
         ARRIVING,
         STAYING,
         GOING_AWAY,
     }
 
-    public DirtyFly() {
-        avatar = new Avatar();
-        avatar.shape = shape;
+    public DirtyFly(Creature creature) {
+        this.creature = creature;
+        avatar = mould.copy();
+        avatar.shape.hardScale(0.01f, -0.01f);
 
         fnX = new TFTimetable(MathUtils.random(3.0f, 5.0f), true, true);
         float[] table = new float[MathUtils.ceil(MathUtils.random(5, 9))];
@@ -49,6 +53,7 @@ public class DirtyFly extends Entity {
 
         fn0 = new TFEaseFromTo(-4f, 0.0f, 0f, 2f, "fastSlow", false, false);
         fn0Scale = new TFEaseFromTo(4f, 1.0f, 0f, 2f, "fastSlow", false, false);
+        sinx = new TFSin(1.2f, 0.4f, 0.0f, 0.0f);
 
         state = State.ARRIVING;
     }
@@ -57,7 +62,8 @@ public class DirtyFly extends Entity {
         avatar.update(delta);
         fnX.update(delta);
         fnY.update(delta);
-        posX = fnX.getValue();
+        sinx.update(delta);
+        posX = fnX.getValue() + creature.body.getPosition().x + sinx.getValue();
         posY = fnY.getValue();
 
         switch (state) {
@@ -68,7 +74,7 @@ public class DirtyFly extends Entity {
                     state = State.STAYING;
                 posX += fn0.getValue();
                 posY += fn0.getValue();
-                avatar.scale(fn0Scale.getValue());
+                avatar.setScale(fn0Scale.getValue());
                 break;
             case GOING_AWAY:
                 fn0.update(delta);

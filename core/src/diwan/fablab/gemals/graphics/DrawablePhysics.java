@@ -68,6 +68,7 @@ public class DrawablePhysics {
         renderer.pushMatrix(transform);
         for (DrawablePolygon shape : shapes)
             shape.draw(renderer);
+
         renderer.popMatrix();
     }
 }

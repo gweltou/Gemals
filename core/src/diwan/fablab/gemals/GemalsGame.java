@@ -10,7 +10,7 @@ import com.badlogic.gdx.input.GestureDetector.GestureListener;
 
 
 public class GemalsGame extends com.badlogic.gdx.Game implements GestureListener {
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 	public static final boolean DEBUG_PHYSICS = false;
 
 	MyScreen mainScreen;

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class ComplexShape implements Shape {
     protected ComplexShape parent;
     private final ArrayList<ComplexShape> children;
-    private final ArrayList<Shape> shapes; // CompleShapes and simple shapes
+    private final ArrayList<Shape> shapes; // ComplexShapes and simple shapes
     private Animation[] animations;
     private final Vector2 localOrigin;  // Pivot point
     private final Affine2 transform, oldTransform, nextTransform;
@@ -272,6 +272,10 @@ public class ComplexShape implements Shape {
             shape.setColorMod(mr, mg, mb, ma);
     }
 
+    /*public void setColor(float r, float g, float b, float a) {
+
+    }*/
+
 
     public void draw(MyRenderer renderer) {
         renderer.pushMatrix(transform);
@@ -283,6 +287,7 @@ public class ComplexShape implements Shape {
 
     public ComplexShape copy() {
         ComplexShape copy = new ComplexShape();
+        copy.id = id;
         for (Shape shape : shapes)
             copy.addShape(shape.copy());
         copy.setLocalOrigin(localOrigin.x, localOrigin.y);
@@ -305,16 +310,9 @@ public class ComplexShape implements Shape {
                     if (type.equals("polygon")) {
                         DrawablePolygon p = new DrawablePolygon();
                         p.setVertices(shape.get("vertices").asFloatArray());
-
-                        int[] triangles = shape.get("triangles").asIntArray();
-                        short[] trianglesShort = new short[triangles.length];
-                        for (int j=0; j<triangles.length; j++)
-                            trianglesShort[j] = (short) triangles[j];
-                        p.setIndices(trianglesShort);
-
+                        p.setIndices(shape.get("triangles").asShortArray());
                         float[] c = shape.get("color").asFloatArray();
                         p.setColor(c[0], c[1], c[2], c[3]);
-
                         cs.addShape(p);
                     } else if (type.equals("circle")) {
                         float[] params = shape.get("params").asFloatArray();

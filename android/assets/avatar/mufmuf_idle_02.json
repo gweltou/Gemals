@@ -1,4 +1,228 @@
 {
+"animation": [
+	{
+		"name": "anim0",
+		"duration": 0.0,
+		"groups": [
+			{
+				"id": "g2167",
+				"functions": [
+					{
+						"function": "TFSin",
+						"axe": "rotation",
+						"inv": false,
+						"amp": 180.0,
+						"duration": 1.0,
+						"mult": 0.23353293538093567,
+						"offset": -0.20958077907562256,
+						"phase": 0.0
+					}
+				]
+			},
+			{
+				"id": "g2061",
+				"functions": [
+					{
+						"function": "TFSin",
+						"axe": "rotation",
+						"inv": false,
+						"amp": 180.0,
+						"duration": 7.69999885559082,
+						"mult": 0.023952096700668335,
+						"offset": 0.0,
+						"phase": 0.0
+					}
+				]
+			},
+			{
+				"id": "g2080",
+				"functions": [
+					{
+						"function": "TFSin",
+						"axe": "rotation",
+						"inv": false,
+						"amp": 180.0,
+						"duration": 7.69999885559082,
+						"mult": 0.02994012087583542,
+						"offset": 0.0,
+						"phase": 0.0
+					}
+				]
+			},
+			{
+				"id": "g992",
+				"functions": [
+					{
+						"function": "TFSin",
+						"axe": "rotation",
+						"inv": false,
+						"amp": 180.0,
+						"duration": 1.0,
+						"mult": 0.02994012087583542,
+						"offset": -0.12574845552444458,
+						"phase": 0.0
+					}
+				]
+			},
+			{
+				"id": "g999",
+				"functions": [
+					{
+						"function": "TFSin",
+						"axe": "rotation",
+						"inv": false,
+						"amp": 180.0,
+						"duration": 4.499999523162842,
+						"mult": 0.01796407252550125,
+						"offset": 0.0,
+						"phase": 0.0
+					}
+				]
+			},
+			{
+				"id": "g986",
+				"functions": [
+					{
+						"function": "TFSin",
+						"axe": "rotation",
+						"inv": false,
+						"amp": 180.0,
+						"duration": 2.1000001430511475,
+						"mult": 0.011976048350334167,
+						"offset": 0.01796412467956543,
+						"phase": 0.0
+					}
+				]
+			},
+			{
+				"id": "g2058",
+				"functions": [
+					{
+						"function": "TFSin",
+						"axe": "rotation",
+						"inv": false,
+						"amp": 180.0,
+						"duration": 7.69999885559082,
+						"mult": 0.02994012087583542,
+						"offset": 0.0,
+						"phase": 0.0
+					}
+				]
+			},
+			{
+				"id": "g2055",
+				"functions": [
+					{
+						"function": "TFSin",
+						"axe": "rotation",
+						"inv": false,
+						"amp": 180.0,
+						"duration": 1.3000000715255737,
+						"mult": 0.04790419340133667,
+						"offset": 0.0,
+						"phase": 0.0
+					}
+				]
+			},
+			{
+				"id": "g2099",
+				"functions": [
+					{
+						"function": "TFSin",
+						"axe": "rotation",
+						"inv": false,
+						"amp": 180.0,
+						"duration": 3.5999999046325684,
+						"mult": 0.01796407252550125,
+						"offset": 0.005988121032714844,
+						"phase": 0.0
+					}
+				]
+			},
+			{
+				"id": "g2049",
+				"functions": [
+					{
+						"function": "TFSin",
+						"axe": "rotation",
+						"inv": false,
+						"amp": 180.0,
+						"duration": 3.5999999046325684,
+						"mult": 0.01796407252550125,
+						"offset": 0.005988121032714844,
+						"phase": 0.0
+					}
+				]
+			},
+			{
+				"id": "g2052",
+				"functions": [
+					{
+						"function": "TFSin",
+						"axe": "rotation",
+						"inv": false,
+						"amp": 180.0,
+						"duration": 4.399999618530273,
+						"mult": 0.023952096700668335,
+						"offset": 0.0,
+						"phase": 0.0
+					}
+				]
+			},
+			{
+				"id": "g2084",
+				"functions": [
+					{
+						"function": "TFSin",
+						"axe": "rotation",
+						"inv": false,
+						"amp": 180.0,
+						"duration": 2.1000001430511475,
+						"mult": 0.0359281450510025,
+						"offset": -0.06586825847625732,
+						"phase": 0.0
+					}
+				]
+			},
+			{
+				"id": "g2088",
+				"functions": [
+					{
+						"function": "TFSin",
+						"axe": "rotation",
+						"inv": false,
+						"amp": 180.0,
+						"duration": 2.1000001430511475,
+						"mult": 0.011976048350334167,
+						"offset": 0.01796412467956543,
+						"phase": 0.0
+					}
+				]
+			},
+			{
+				"id": "g1021",
+				"functions": [
+					{
+						"function": "TFSin",
+						"axe": "rotation",
+						"inv": false,
+						"amp": 180.0,
+						"duration": 4.499999523162842,
+						"mult": 0.01796407252550125,
+						"offset": 0.0,
+						"phase": 0.0
+					}
+				]
+			}
+		]
+	}
+],
+"box2d": [
+	{
+		"type": "polygon",
+		"vertices": [ -54.163414001464844, -17.42746925354004, -13.466785430908203, -93.07537078857422, 13.345123291015625, -93.07537841796875, 54.28115463256836, -13.357810020446777, 40.39641189575195, 1.963282823562622, -42.67259216308594, 1.723885178565979 ]
+	}
+],
 "geometry": {
 	"id": "layer1",
 	"origin": [ -0.038910895586013794, 0.03526568412780762 ],
@@ -400,222 +624,5 @@
 			]
 		}
 	]
-},
-"animation": [
-	{
-		"name": "anim0",
-		"groups": [
-			{
-				"id": "g2052",
-				"functions": [
-					{
-						"function": "TFSin",
-						"axe": "rotation",
-						"inv": false,
-						"amp": 180.0,
-						"duration": 4.399999618530273,
-						"mult": 0.023952096700668335,
-						"offset": 0.0,
-						"phase": 0.0
-					}
-				]
-			},
-			{
-				"id": "g2061",
-				"functions": [
-					{
-						"function": "TFSin",
-						"axe": "rotation",
-						"inv": false,
-						"amp": 180.0,
-						"duration": 7.69999885559082,
-						"mult": 0.023952096700668335,
-						"offset": 0.0,
-						"phase": 0.0
-					}
-				]
-			},
-			{
-				"id": "g2084",
-				"functions": [
-					{
-						"function": "TFSin",
-						"axe": "rotation",
-						"inv": false,
-						"amp": 180.0,
-						"duration": 2.1000001430511475,
-						"mult": 0.0359281450510025,
-						"offset": -0.06586825847625732,
-						"phase": 0.0
-					}
-				]
-			},
-			{
-				"id": "g992",
-				"functions": [
-					{
-						"function": "TFSin",
-						"axe": "rotation",
-						"inv": false,
-						"amp": 180.0,
-						"duration": 1.0,
-						"mult": 0.02994012087583542,
-						"offset": -0.12574845552444458,
-						"phase": 0.0
-					}
-				]
-			},
-			{
-				"id": "g2167",
-				"functions": [
-					{
-						"function": "TFSin",
-						"axe": "rotation",
-						"inv": false,
-						"amp": 180.0,
-						"duration": 1.0,
-						"mult": 0.23353293538093567,
-						"offset": -0.20958077907562256,
-						"phase": 0.0
-					}
-				]
-			},
-			{
-				"id": "g2055",
-				"functions": [
-					{
-						"function": "TFSin",
-						"axe": "rotation",
-						"inv": false,
-						"amp": 180.0,
-						"duration": 1.3000000715255737,
-						"mult": 0.04790419340133667,
-						"offset": 0.0,
-						"phase": 0.0
-					}
-				]
-			},
-			{
-				"id": "g2099",
-				"functions": [
-					{
-						"function": "TFSin",
-						"axe": "rotation",
-						"inv": false,
-						"amp": 180.0,
-						"duration": 3.5999999046325684,
-						"mult": 0.01796407252550125,
-						"offset": 0.005988121032714844,
-						"phase": 0.0
-					}
-				]
-			},
-			{
-				"id": "g2088",
-				"functions": [
-					{
-						"function": "TFSin",
-						"axe": "rotation",
-						"inv": false,
-						"amp": 180.0,
-						"duration": 2.1000001430511475,
-						"mult": 0.011976048350334167,
-						"offset": 0.01796412467956543,
-						"phase": 0.0
-					}
-				]
-			},
-			{
-				"id": "g1021",
-				"functions": [
-					{
-						"function": "TFSin",
-						"axe": "rotation",
-						"inv": false,
-						"amp": 180.0,
-						"duration": 4.499999523162842,
-						"mult": 0.01796407252550125,
-						"offset": 0.0,
-						"phase": 0.0
-					}
-				]
-			},
-			{
-				"id": "g2049",
-				"functions": [
-					{
-						"function": "TFSin",
-						"axe": "rotation",
-						"inv": false,
-						"amp": 180.0,
-						"duration": 3.5999999046325684,
-						"mult": 0.01796407252550125,
-						"offset": 0.005988121032714844,
-						"phase": 0.0
-					}
-				]
-			},
-			{
-				"id": "g2058",
-				"functions": [
-					{
-						"function": "TFSin",
-						"axe": "rotation",
-						"inv": false,
-						"amp": 180.0,
-						"duration": 7.69999885559082,
-						"mult": 0.02994012087583542,
-						"offset": 0.0,
-						"phase": 0.0
-					}
-				]
-			},
-			{
-				"id": "g999",
-				"functions": [
-					{
-						"function": "TFSin",
-						"axe": "rotation",
-						"inv": false,
-						"amp": 180.0,
-						"duration": 4.499999523162842,
-						"mult": 0.01796407252550125,
-						"offset": 0.0,
-						"phase": 0.0
-					}
-				]
-			},
-			{
-				"id": "g2080",
-				"functions": [
-					{
-						"function": "TFSin",
-						"axe": "rotation",
-						"inv": false,
-						"amp": 180.0,
-						"duration": 7.69999885559082,
-						"mult": 0.02994012087583542,
-						"offset": 0.0,
-						"phase": 0.0
-					}
-				]
-			},
-			{
-				"id": "g986",
-				"functions": [
-					{
-						"function": "TFSin",
-						"axe": "rotation",
-						"inv": false,
-						"amp": 180.0,
-						"duration": 2.1000001430511475,
-						"mult": 0.011976048350334167,
-						"offset": 0.01796412467956543,
-						"phase": 0.0
-					}
-				]
-			}
-		]
-	}
-]
+}
 }

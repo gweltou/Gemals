@@ -86,6 +86,21 @@ public class DrawableCircle extends DrawablePolygon {
 
 
     @Override
+    public float[] getVertices() {
+        if (dirty)
+            computeVertices();
+        return vertices;
+    }
+
+    @Override
+    public short[] getIndices() {
+        if (dirty)
+            computeVertices();
+        return indices;
+    }
+
+
+    @Override
     public void hardTransform(Affine2 transform) {
         if (dirty)
             computeVertices();
@@ -93,6 +108,14 @@ public class DrawableCircle extends DrawablePolygon {
         transform.applyTo(center);
         radius = radius * transform.m00;
     }
+
+
+    public DrawablePolygon copy() {
+        DrawableCircle circle = new DrawableCircle(center.x, center.y, radius);
+        circle.setColor(colorOrig.cpy());
+        return circle;
+    }
+
 
     @Override
     public void draw(MyRenderer renderer) {

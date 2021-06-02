@@ -4,14 +4,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.JsonValue;
 import diwan.fablab.gemals.entities.Food;
 import diwan.fablab.gemals.entities.PhysicsAvatar;
+import diwan.fablab.gemals.entities.PhysicsCategories;
 import diwan.fablab.gemals.graphics.DrawablePhysics;
 import gwel.game.entities.Avatar;
-import diwan.fablab.gemals.entities.PhysicsCategories;
-import gwel.game.graphics.ComplexShape;
+import gwel.game.graphics.Shape;
 
 import java.util.Iterator;
 
@@ -23,6 +26,7 @@ public class Creature extends PhysicsAvatar {
     private enum State {
         EGG,
         IDLE,
+        WALKING,
         SLEEPING,
         DEAD,
     }
@@ -30,8 +34,9 @@ public class Creature extends PhysicsAvatar {
     public int steps;
     State state;
     private float timeInStep;
+    private int walkSide = -1;
 
-    Avatar idleAvatar, sleepAvatar, eatAvatar;
+    Avatar idleAvatar, sleepAvatar, eatAvatar, walkAvatar;
 
 
     // When energy falls to 0 the creature's life is threatened
@@ -89,6 +94,7 @@ public class Creature extends PhysicsAvatar {
         float preMem = Gdx.app.getJavaHeap()/1024f;
         idleAvatar = Avatar.fromFile(Gdx.files.internal("avatar/mufmuf_idle_02.json"));
         idleAvatar.scale(0.01f);
+        idleAvatar.scalePhysics(0.01f);
         idleAvatar.timeScale(3);
         sleepAvatar = Avatar.fromFile(Gdx.files.internal("avatar/mufmuf_sleep_g01.json"));
         sleepAvatar.scale(0.01f);
@@ -96,6 +102,9 @@ public class Creature extends PhysicsAvatar {
         eatAvatar = Avatar.fromFile(Gdx.files.internal("avatar/mufmuf_eat_8.json"));
         eatAvatar.scale(0.01f);
         eatAvatar.timeScale(4f);
+        walkAvatar = Avatar.fromFile(Gdx.files.internal("avatar/mufmuf_walk_anime.json"));
+        walkAvatar.scale(0.009f);
+        walkAvatar.timeScale(3f);
         Gdx.app.log("memory", "avatars creation");
         Gdx.app.log("memory", String.valueOf(Gdx.app.getJavaHeap()/1024f - preMem));
 
@@ -122,7 +131,7 @@ public class Creature extends PhysicsAvatar {
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = box;
         fixtureDef.density = 1.0f;
-        fixtureDef.friction = 0.6f;
+        fixtureDef.friction = 0.2f;
         fixtureDef.restitution = 0f;
         fixtureDef.filter.categoryBits = PhysicsCategories.GEMAL;
         fixtureDef.filter.maskBits -= PhysicsCategories.FOOD;
@@ -136,10 +145,23 @@ public class Creature extends PhysicsAvatar {
     }
 
 
+    public boolean contains(float x, float y) {
+        Vector2 point = new Vector2(x, y);
+        transform.inv().applyTo(point);
+        for (Shape shape : avatar.physicsShapes) {
+            if (shape.contains(point.x, point.y))
+                return true;
+        }
+        return false;
+    }
+
+
     public void update(float delta) {
         if (state == State.DEAD)
             return;
 
+        if (avatar == walkAvatar)
+            body.applyForceToCenter(4 * walkSide, 0, true);
 
         timeInStep += delta;
         if (timeInStep > TIME_STEP) {
@@ -212,7 +234,20 @@ public class Creature extends PhysicsAvatar {
                 if (MathUtils.random() < sleepProb) {
                     state = State.SLEEPING;
                     sleepAvatar.setFlipX(MathUtils.random() < 0.5f);
+                } else if (MathUtils.random() < 0.05f) {
+                    state = State.WALKING;
+                    avatar = walkAvatar;
+                    if (stage.cameraWorld.position.x > body.getPosition().x)
+                        walkSide = 1;
+                    else
+                        walkSide = -1;
+                    walkAvatar.setFlipX(walkSide > 0);
                 }
+                break;
+
+            case WALKING:
+                if (Math.abs(stage.cameraWorld.position.x - body.getPosition().x) < 4)
+                    state = State.IDLE;
                 break;
 
             case SLEEPING:
@@ -255,27 +290,34 @@ public class Creature extends PhysicsAvatar {
         clampValues();
     }
 
-    public void clean() {
-        dirty -= 35;
-        sleepy += 20;
-        energy -= 10;
-        mood += 10;
-        hungry += 10;
+    public void clean(float amount) {
+        dirty -= 35 * amount;
+        sleepy += 20 * amount;
+        energy -= 10 * amount;
+        mood += 10 * amount;
+        hungry += 10 * amount;
         clampValues();
     }
 
     public void pet() {
         clampValues();
-
     }
 
     public void play() {
         clampValues();
     }
 
-    public void saveData() {
-        //Gdx.files.local()
-        Json json = new Json();
-        System.out.println(json.prettyPrint(this));
+
+    public JsonValue getState() {
+        JsonValue json = new JsonValue(JsonValue.ValueType.object);
+        json.addChild("state", new JsonValue(state.toString()));
+        json.addChild("steps", new JsonValue(steps));
+        json.addChild("energy", new JsonValue(energy));
+        json.addChild("sleepy", new JsonValue(sleepy));
+        json.addChild("dirty", new JsonValue(dirty));
+        json.addChild("mood", new JsonValue(mood));
+        json.addChild("hungry", new JsonValue(hungry));
+
+        return json;
     }
 }

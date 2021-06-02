@@ -4,12 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.utils.Disposable;
 import diwan.fablab.gemals.GemalsGame;
 import diwan.fablab.gemals.graphics.DrawablePhysics;
 import diwan.fablab.gemals.graphics.MyRenderer;
 import gwel.game.entities.Avatar;
-import gwel.game.graphics.Drawable;
+import gwel.game.entities.Entity;
 import gwel.game.graphics.DrawableCircle;
 import gwel.game.graphics.DrawablePolygon;
 import gwel.game.graphics.Shape;
@@ -19,14 +18,22 @@ import gwel.game.graphics.Shape;
  * An avatar which also exists in Box2D physic world
  *
  */
-public class PhysicsAvatar implements Disposable, Drawable {
-    protected Avatar avatar;
+public class PhysicsAvatar extends Entity {
+    public Avatar avatar;
     protected Body body;
     protected FixtureDef fixtureDef;
     protected DrawablePhysics drawablePhysics;    // To show physics body in debug mode
-    private final Affine2 transform = new Affine2();
+    protected final Affine2 transform = new Affine2();
 
 
+    /**
+     * Creates a Box2D physics body from the shapes in avatar.physicsShapes array
+     * The avatar property must be set first
+     *
+     * @param world
+     * @param position
+     * @param angle
+     */
     public void buildBody(World world, Vector2 position, float angle) {
         Gdx.app.log("PhysicsAvatar", "buildBody");
         BodyDef bodyDef = new BodyDef();
@@ -77,9 +84,10 @@ public class PhysicsAvatar implements Disposable, Drawable {
     }
 
     @Override
-    public void setColorMod(float rm, float gm, float bm, float am) {
-        avatar.shape.setColorMod(rm, gm, bm, am);
+    public void update(float delta) {
+        avatar.update(delta);
     }
+
 
     @Override
     public void dispose() {
