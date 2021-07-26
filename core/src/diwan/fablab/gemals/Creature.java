@@ -36,7 +36,7 @@ public class Creature extends PhysicsAvatar {
     private float timeInStep;
     private int walkSide = -1;
 
-    Avatar idleAvatar, sleepAvatar, eatAvatar, walkAvatar;
+    Avatar idleAvatar, sleepAvatar, eatAvatar, walkAvatar, happyAvatar;
 
 
     // When energy falls to 0 the creature's life is threatened
@@ -105,6 +105,10 @@ public class Creature extends PhysicsAvatar {
         walkAvatar = Avatar.fromFile(Gdx.files.internal("avatar/mufmuf_walk_anime.json"));
         walkAvatar.scale(0.009f);
         walkAvatar.timeScale(3f);
+        happyAvatar = Avatar.fromFile(Gdx.files.internal("avatar/mufmuf_happy_anime_3.json"));
+        happyAvatar.scale(0.011f);
+        happyAvatar.timeScale(10);
+
         Gdx.app.log("memory", "avatars creation");
         Gdx.app.log("memory", String.valueOf(Gdx.app.getJavaHeap()/1024f - preMem));
 
@@ -300,13 +304,15 @@ public class Creature extends PhysicsAvatar {
     }
 
     public void pet() {
+        if (state == State.IDLE) {
+            avatar = happyAvatar;
+        }
         clampValues();
     }
 
-    public void play() {
+    /*public void play() {
         clampValues();
-    }
-
+    }*/
 
     public JsonValue getState() {
         JsonValue json = new JsonValue(JsonValue.ValueType.object);

@@ -22,6 +22,7 @@ public class Grass extends Entity {
         avatar = moulds[r].copy();
         avatar.setPosition(x, y);
         avatar.scale(scale, -scale);
+        avatar.timeScale(MathUtils.random(0.9f, 1.1f));
         avatar.setFlipX(MathUtils.random() > 0.5f);
     }
 

@@ -92,18 +92,20 @@ public class CreatureScreen extends MyScreen {
         cursorSoap = Avatar.fromFile(Gdx.files.internal("cursor/soap_anime.json"));
         cursorSoap.scale(2, -2);
 
-        buildStageBorders(20, 10, 1);
+        buildStageBorders(20, 10, 2);
 
         creature = new Creature(this);
         creature.buildBody(world, new Vector2(0, 0.4f));
 
 
-        // Background props
+        // BACKGROUND PROPS
+        // Jellyfish
+        backgroundEntities.add(new Jellyfish());
 
         // Rocks
         int n = MathUtils.random(1, 3);
         for (int i=0; i<n; i++)
-            backgroundEntities.add(new Rock(MathUtils.random(-3f, 3f), 0f, MathUtils.random(0.01f, 0.02f)));
+            backgroundEntities.add(new Rock(MathUtils.random(-4f, 4f), 0f, MathUtils.random(0.01f, 0.02f)));
 
         // Mushrooms
         n = MathUtils.random(2, 6);
@@ -112,23 +114,26 @@ public class CreatureScreen extends MyScreen {
             floats.add(MathUtils.random(0.005f, 0.02f));
         Collections.sort(floats, Collections.reverseOrder());
         for (Float s : floats)
-            backgroundEntities.add(new Mushroom(MathUtils.random(-3f, 3f), 0, s));
+            backgroundEntities.add(new Mushroom(MathUtils.random(-4f, 4f), 0, s));
 
         // Grass
         for (int i=0; i<16; i++)
-            backgroundEntities.add(new Grass(MathUtils.random(-3f, 3f), 0, MathUtils.random(0.01f, 0.014f)));
+            backgroundEntities.add(new Grass(MathUtils.random(-4f, 4f), 0, MathUtils.random(0.01f, 0.014f)));
 
-        // Foreground props
+        // FOREGROUND PROPS
         // Grass
         floats.clear();
-        for (int i=0; i<10; i++)
-            floats.add(MathUtils.random(-0.25f, 0f));
+        for (int i=0; i<16; i++)
+            floats.add(MathUtils.random(-0.8f, -0.05f));
         Collections.sort(floats, Collections.reverseOrder());
-        for (Float y : floats)
-            foregroundEntities.add(new Grass(MathUtils.random(-3f, 3f), y, MathUtils.random(0.011f, 0.018f)));
+        float s = 0.001f;
+        for (Float y : floats) {
+            foregroundEntities.add(new Grass(MathUtils.random(-4f, 4f), y, MathUtils.random(0.011f+s, 0.018f+s)));
+            s += 0.001f;
+        }
         // Butterflies
         for (int i=0; i<3; i++)
-            foregroundEntities.add(new Butterfly(MathUtils.random(-3f, 3f), MathUtils.random(1f, 2f)));
+            foregroundEntities.add(new Butterfly(MathUtils.random(-4f, 4f), MathUtils.random(1f, 2f)));
 
 
         // Load save gwel.game
@@ -196,59 +201,31 @@ public class CreatureScreen extends MyScreen {
         //Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         renderer.renderSky(timeOfDay);
 
-		/*
-		if (touchPathIndex >= 4) {
-			shapeRenderer.setColor(0, 0, 1, 1);
-			float lastX = touchPath[0];
-			float lastY = touchPath[1];
-			float nextX, nextY;
-			for (int i = 2; i < touchPathIndex; ) {
-				nextX = touchPath[i++];
-				nextY = touchPath[i++];
-				shapeRenderer.rectLine(lastX, lastY, nextX, nextY, 4);
-				lastX = nextX;
-				lastY = nextY;
-			}
-		}
-		*/
-
         renderer.setProjectionMatrix(cameraWorld.combined);
-
         for (Entity entity : backgroundEntities)
             entity.draw(renderer);
-
         for (DrawablePhysics drawable : drawables)
             drawable.draw(renderer);
-
         creature.draw(renderer);
-
         for (PhysicsAvatar physicsAvatar : food)
             physicsAvatar.draw(renderer);
-
         for (Entity entity : foregroundEntities)
             entity.draw(renderer);
-
-
         renderer.flush();
 
         renderer.setProjectionMatrix(cameraUI.combined);
-
         buttonFeedIcon.draw(renderer);
         buttonCleanIcon.draw(renderer);
         buttonPetIcon.draw(renderer);
-        //buttonPet.draw(renderer);
-        buttonPlay.draw(renderer);
+        //buttonPlay.draw(renderer);
 
         if (soap) {
             //cursorSoap.update(delta);
             cursorSoap.draw(renderer);
         }
-
         renderer.flush();
 
         batch.begin();
-
-        //buttonFeedSprite.draw(batch);
 
         if (GemalsGame.DEBUG) {
             float height = game.defaultfont.getLineHeight() + 4;
@@ -275,7 +252,7 @@ public class CreatureScreen extends MyScreen {
         cameraWorld.position.set(0, 0.5f, 0);
 
         float buttonBarWidth = Math.min(width, height);
-        float buttonBarStep = buttonBarWidth / (5+3*4);
+        float buttonBarStep = buttonBarWidth / (5+3*3); // Why is that ?
         float buttonRadius = 1.5f * buttonBarStep;
         buttonFeed = new DrawableCircle(width*0.5f - buttonBarWidth*0.5f + buttonBarStep + buttonRadius,
                 buttonBarStep + buttonRadius, buttonRadius);
@@ -301,9 +278,9 @@ public class CreatureScreen extends MyScreen {
                 buttonBarStep + buttonRadius);
         buttonPetIcon.setScale(spriteScale * 0.045f, -spriteScale * 0.045f);
 
-        buttonPlay = new DrawableCircle(width*0.5f - buttonBarWidth*0.5f + 4*buttonBarStep + 7*buttonRadius,
+        /*buttonPlay = new DrawableCircle(width*0.5f - buttonBarWidth*0.5f + 4*buttonBarStep + 7*buttonRadius,
                 buttonBarStep + buttonRadius, buttonRadius);
-        buttonPlay.setColor(Color.ORANGE);
+        buttonPlay.setColor(Color.ORANGE);*/
 
         cameraUI.setToOrtho(false, width, height);
         cameraUI.position.set(width/2, height/2, 0);
@@ -374,10 +351,11 @@ public class CreatureScreen extends MyScreen {
         } else if (buttonPet.getCenter().dst(x, y) < buttonPet.getRadius()) {
             Gdx.app.log("TOUCH", "button pet");
             creature.pet();
-        } else if (buttonPlay.getCenter().dst(x, y) < buttonPlay.getRadius()) {
+        }
+        /*else if (buttonPlay.getCenter().dst(x, y) < buttonPlay.getRadius()) {
             Gdx.app.log("TOUCH", "button play");
             creature.play();
-        }
+        }*/
         return true;
     }
 
@@ -408,7 +386,9 @@ public class CreatureScreen extends MyScreen {
             }
         } else {
             cameraWorld.position.x -= deltaX * 0.002f * cameraWorld.zoom;
+            cameraWorld.position.x = MathUtils.clamp(cameraWorld.position.x, -2f, 2f);
             cameraWorld.position.y += deltaY * 0.002f * cameraWorld.zoom;
+            cameraWorld.position.y = MathUtils.clamp(cameraWorld.position.y, -0.1f, 2f);
         }
         return true;
     }
